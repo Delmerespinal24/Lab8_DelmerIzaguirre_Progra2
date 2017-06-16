@@ -5,6 +5,7 @@
  */
 package Principal8;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
@@ -23,15 +24,18 @@ public class FramePrincipal extends javax.swing.JFrame {
      * Creates new form FramePrincipal
      */
     public FramePrincipal() {
-        
+
         initComponents();
         setLocationRelativeTo(null);
         Mostrar();
-         System.out.println(listacontactos.get(0).getMensajes().size());
 
     }
 
     ArrayList<Contacto> listacontactos = new ArrayList();
+    private DefaultMutableTreeNode nodo_s;
+    private Contacto select;
+    
+    private int mensajes;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -45,12 +49,12 @@ public class FramePrincipal extends javax.swing.JFrame {
         AB.escribirArchivo();
 
         Mostrar();
-        
 
     }
     private Contacto MiNumero = new Contacto("Mi numero", 18, (long) 98761234, "Hola@unitec.edu", "Tegucigalpa");
 
     public void Mostrar() {
+        mensajes = 0;
         adminBinarios AB = new adminBinarios("./Contactos.lab");
         AB.CargarArchivo();
 
@@ -62,15 +66,17 @@ public class FramePrincipal extends javax.swing.JFrame {
 
         DefaultComboBoxModel cb_mensaje = (DefaultComboBoxModel) cb_contactos.getModel();
         cb_mensaje.removeAllElements();
-        
+
         DefaultListModel buzon = (DefaultListModel) jl_buzon.getModel();
-        
+        buzon.removeAllElements();
+
         for (Contacto lc : listacontactos) {
             cb_mensaje.addElement(lc);
-            
+
             for (Mensaje msn : lc.mensajes) {
                 buzon.addElement(msn);
-                
+                mensajes++;
+
             }
 
             DefaultMutableTreeNode contacto = new DefaultMutableTreeNode(lc);
@@ -154,9 +160,18 @@ public class FramePrincipal extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         jl_buzon = new javax.swing.JList<>();
         jLabel15 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        filtro = new javax.swing.JComboBox<>();
+        jButton16 = new javax.swing.JButton();
         jd_vermensaje = new javax.swing.JDialog();
-        jPanel7 = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel16 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        ta_mensaje1 = new javax.swing.JTextArea();
+        jLabel17 = new javax.swing.JLabel();
+        jButton17 = new javax.swing.JButton();
+        tf_emisor = new javax.swing.JTextField();
+        jLabel18 = new javax.swing.JLabel();
+        lb_fecha = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -165,6 +180,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         orden_edad = new javax.swing.JButton();
         orden_genero = new javax.swing.JButton();
         jToggleButton3 = new javax.swing.JToggleButton();
+        jButton18 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         Inicio = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -623,6 +639,11 @@ public class FramePrincipal extends javax.swing.JFrame {
         jLabel14.setText("Buzon de Salida");
 
         jl_buzon.setModel(new DefaultListModel());
+        jl_buzon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jl_buzonMouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(jl_buzon);
 
         scrollPane1.add(jScrollPane3);
@@ -630,7 +651,14 @@ public class FramePrincipal extends javax.swing.JFrame {
         jLabel15.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel15.setText("Filtrar por: ");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Fecha", "Contacto" }));
+        filtro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Fecha", "Contacto" }));
+
+        jButton16.setText("Actualizar");
+        jButton16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton16ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -642,30 +670,32 @@ public class FramePrincipal extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(scrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addGap(199, 199, 199)
-                                .addComponent(jLabel14))
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addGap(50, 50, 50)
-                                .addComponent(jLabel15)
-                                .addGap(18, 18, 18)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(199, 199, 199)
+                        .addComponent(jLabel14)
                         .addGap(0, 223, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(jLabel15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(filtro, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton16)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(jLabel14)
-                .addGap(38, 38, 38)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(filtro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel15)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
+                    .addComponent(jButton16))
+                .addGap(47, 47, 47)
                 .addComponent(scrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jd_buzon_salidaLayout = new javax.swing.GroupLayout(jd_buzon_salida.getContentPane());
@@ -679,28 +709,89 @@ public class FramePrincipal extends javax.swing.JFrame {
             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jPanel7.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel8.setBackground(new java.awt.Color(204, 204, 204));
 
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 568, Short.MAX_VALUE)
+        jLabel16.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel16.setText("Receptor:");
+
+        ta_mensaje1.setEditable(false);
+        ta_mensaje1.setColumns(20);
+        ta_mensaje1.setRows(5);
+        jScrollPane4.setViewportView(ta_mensaje1);
+
+        jLabel17.setText("Mensaje");
+
+        jButton17.setBackground(new java.awt.Color(255, 0, 0));
+        jButton17.setText("X");
+        jButton17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton17ActionPerformed(evt);
+            }
+        });
+
+        tf_emisor.setEditable(false);
+
+        jLabel18.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel18.setText("Fecha:");
+
+        lb_fecha.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lb_fecha.setText("01/ene/2017  1:00");
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel16)
+                .addGap(28, 28, 28)
+                .addComponent(tf_emisor, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(196, 196, 196)
+                .addComponent(jButton17)
+                .addGap(19, 19, 19))
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel17))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel18)
+                        .addGap(18, 18, 18)
+                        .addComponent(lb_fecha, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel16)
+                    .addComponent(jButton17)
+                    .addComponent(tf_emisor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(34, 34, 34)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18)
+                    .addComponent(lb_fecha))
+                .addGap(28, 28, 28)
+                .addComponent(jLabel17)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jd_vermensajeLayout = new javax.swing.GroupLayout(jd_vermensaje.getContentPane());
         jd_vermensaje.getContentPane().setLayout(jd_vermensajeLayout);
         jd_vermensajeLayout.setHorizontalGroup(
             jd_vermensajeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jd_vermensajeLayout.setVerticalGroup(
             jd_vermensajeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -738,6 +829,14 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
         });
 
+        jButton18.setBackground(new java.awt.Color(51, 255, 51));
+        jButton18.setText("Llamada");
+        jButton18.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton18ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -756,12 +855,14 @@ public class FramePrincipal extends javax.swing.JFrame {
                         .addComponent(orden_edad, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(orden_genero, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 101, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jToggleButton3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(50, 50, 50)
+                .addComponent(jButton18, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(49, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -776,7 +877,9 @@ public class FramePrincipal extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
-                .addComponent(jToggleButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jToggleButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton18, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(71, Short.MAX_VALUE))
         );
 
@@ -1018,8 +1121,8 @@ public class FramePrincipal extends javax.swing.JFrame {
         if (!ta_mensaje.getText().equals("")) {
             Contacto receptor = (Contacto) cb_contactos.getSelectedItem();
             for (Contacto lc : listacontactos) {
-                if(receptor.equals(lc)){
-                    lc.addMensaje(new Mensaje(MiNumero,receptor,new Date(),ta_mensaje.getText()));
+                if (receptor.equals(lc)) {
+                    lc.addMensaje(new Mensaje(MiNumero, receptor, new Date(), ta_mensaje.getText()));
                 }
             }
             Subir();
@@ -1039,7 +1142,7 @@ public class FramePrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         jd_mensaje.setModal(true);
         jd_mensaje.pack();
-        jd_mensaje.setLocationRelativeTo(this);
+        jd_mensaje.setLocationRelativeTo(jd_buzon_salida);
         jd_mensaje.setVisible(true);
     }//GEN-LAST:event_jToggleButton3ActionPerformed
 
@@ -1049,8 +1152,74 @@ public class FramePrincipal extends javax.swing.JFrame {
         jd_buzon_salida.pack();
         jd_buzon_salida.setLocationRelativeTo(this);
         jd_buzon_salida.setVisible(true);
-        
+
     }//GEN-LAST:event_jmi_buzonActionPerformed
+
+    private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
+        // TODO add your handling code here:
+        jd_vermensaje.dispose();
+    }//GEN-LAST:event_jButton17ActionPerformed
+
+    private void jl_buzonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jl_buzonMouseClicked
+        // TODO add your handling code here:
+        if (jl_buzon.getSelectedIndex() != -1) {
+
+            DefaultListModel lista = (DefaultListModel) jl_buzon.getModel();
+            ta_mensaje1.setText(((Mensaje) lista.getElementAt(jl_buzon.getSelectedIndex())).getContenido());
+            tf_emisor.setText(((Mensaje) lista.getElementAt(jl_buzon.getSelectedIndex())).getReceptor().getNombre());
+            Date estafecha = ((Mensaje) lista.getElementAt(jl_buzon.getSelectedIndex())).getFecha();
+            lb_fecha.setText(new SimpleDateFormat("dd/MMM/yyyy  hh:mm").format(estafecha));
+
+            jd_vermensaje.setModal(true);
+            jd_vermensaje.pack();
+            jd_vermensaje.setLocationRelativeTo(this);
+            jd_vermensaje.setVisible(true);
+
+        }
+
+    }//GEN-LAST:event_jl_buzonMouseClicked
+
+    private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
+        // TODO add your handling code here:
+        DefaultListModel lista = (DefaultListModel) jl_buzon.getModel();
+        Mostrar();
+
+        if (((String) filtro.getSelectedItem()).equals("Fecha")) {
+
+            Mensaje[] msns = new Mensaje[mensajes];
+            for (int i = 0; i < mensajes; i++) {
+                msns[i] = (Mensaje) lista.getElementAt(i);
+            }
+            Mensaje aux;
+
+            for (int i = 0; i < msns.length - 1; i++) {
+                for (int x = i + 1; x < msns.length; x++) {
+                    if (msns[x].getFecha().before(msns[i].getFecha())) {
+                        aux = msns[i];
+                        msns[i] = msns[x];
+                        msns[x] = aux;
+                    }
+                }
+            }
+            DefaultListModel buzon = (DefaultListModel) jl_buzon.getModel();
+            buzon.removeAllElements();
+            for (int i = 0; i < mensajes; i++) {
+                
+                buzon.addElement(msns[i]);
+            }
+
+        }
+
+
+    }//GEN-LAST:event_jButton16ActionPerformed
+
+    private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
+        // TODO add your handling code here:
+        
+        
+        
+        
+    }//GEN-LAST:event_jButton18ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1091,6 +1260,7 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JMenu Inicio;
     private javax.swing.JMenuItem Salir_App;
     private javax.swing.JComboBox<String> cb_contactos;
+    private javax.swing.JComboBox<String> filtro;
     private javax.swing.JDialog genero;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
@@ -1099,6 +1269,9 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton15;
+    private javax.swing.JButton jButton16;
+    private javax.swing.JButton jButton17;
+    private javax.swing.JButton jButton18;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -1107,7 +1280,6 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1115,6 +1287,9 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1132,10 +1307,11 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JToggleButton jToggleButton3;
@@ -1147,13 +1323,16 @@ public class FramePrincipal extends javax.swing.JFrame {
     private javax.swing.JList<String> jl_buzon;
     private javax.swing.JMenuItem jmi_buzon;
     private javax.swing.JTree jt_agenda;
+    private javax.swing.JLabel lb_fecha;
     private javax.swing.JButton orden_edad;
     private javax.swing.JButton orden_genero;
     private java.awt.ScrollPane scrollPane1;
     private javax.swing.JTextArea ta_mensaje;
+    private javax.swing.JTextArea ta_mensaje1;
     private javax.swing.JTextField tf_correo;
     private javax.swing.JTextField tf_direccion;
     private javax.swing.JTextField tf_edad;
+    private javax.swing.JTextField tf_emisor;
     private javax.swing.JTextField tf_nombre;
     private javax.swing.JTextField tf_telefono;
     // End of variables declaration//GEN-END:variables
