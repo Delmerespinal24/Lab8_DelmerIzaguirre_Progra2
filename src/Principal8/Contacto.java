@@ -6,6 +6,7 @@
 package Principal8;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  *
@@ -18,6 +19,7 @@ public class Contacto implements Serializable{
     private String correo;
     private String Direccion;
     private String Genero = "Masculino";
+    ArrayList<Mensaje> mensajes = new ArrayList();
 
     public Contacto() {
     }
@@ -76,6 +78,19 @@ public class Contacto implements Serializable{
 
     public void setGenero(String Genero) {
         this.Genero = Genero;
+    }
+
+    public ArrayList<Mensaje> getMensajes() {
+        return mensajes;
+    }
+
+    public void setMensajes(ArrayList<Mensaje> mensajes) {
+        this.mensajes = mensajes;
+    }
+    
+    public void addMensaje(Mensaje msn){
+        this.mensajes.add(msn);
+        
     }
     
     
