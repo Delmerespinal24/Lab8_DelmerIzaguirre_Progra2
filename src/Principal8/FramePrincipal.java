@@ -1215,7 +1215,7 @@ public class FramePrincipal extends javax.swing.JFrame {
 
     private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
         // TODO add your handling code here:
-        
+        JOptionPane.showMessageDialog(this,"LLamando");
         
         
         
